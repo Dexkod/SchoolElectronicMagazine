@@ -13,7 +13,10 @@ namespace Domain.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; }
-        public Student() { }
+        public Student() 
+        {
+            Lessons = new List<Lesson>();
+        }
 
         public Guid? GroupStudentsId { get; set; }
         public GroupStudents GroupStudent { get; set; }

@@ -17,6 +17,7 @@ namespace Domain.Entities
         public Lesson() 
         {
             GroupStudents = new List<GroupStudents>();
+            StudentsOnLesson = new List<Student>();
         }
 
         public Guid? DayId { get; set; }

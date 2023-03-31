@@ -16,12 +16,15 @@ namespace Domain.Entities
         {
             Teachers = new List<Teacher>();
             Students = new List<Student>();
+            Reports = new List<Report>();
         }
         public Guid? ReportId { get; set; }
         public Report Report { get; set; }
 
-        ICollection<Teacher> Teachers { get; set; }
+        public ICollection<Teacher> Teachers { get; set; }
 
-        ICollection<Student> Students { get; set; }
+        public ICollection<Student> Students { get; set; }
+
+        public ICollection<Report> Reports { get; set; }
     }
 }

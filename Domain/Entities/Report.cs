@@ -17,11 +17,10 @@ namespace Domain.Entities
         public Report()
         {
         }
-
-        public Guid? TeacherId { get; set; } 
+ 
         public Teacher Teacher { get; set;}
 
-        public Guid? StudentId { get; set; }
-        public Student Student { get; set; }
+        public Guid? GroupStudentId { get; set; }
+        public GroupStudents GroupStudents { get; set; }
     }
 }
