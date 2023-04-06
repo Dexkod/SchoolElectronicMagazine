@@ -18,6 +18,13 @@ namespace Domain.Entities
             Students = new List<Student>();
             Reports = new List<Report>();
         }
+        
+        public GroupStudents(string name) : this()
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+        }
+
         public Guid? ReportId { get; set; }
         public Report Report { get; set; }
 

@@ -17,6 +17,14 @@ namespace Domain.Entities
         {
             Lessons = new List<Lesson>();
         }
+
+        public Day(string dayOfWeek, DateTime time) : this()
+        {
+            Id = Guid.NewGuid();
+            DayOfTheWeek = dayOfWeek;
+            Time = time;
+        }
+
         public ICollection<Lesson> Lessons { get; set; }
     }
 }

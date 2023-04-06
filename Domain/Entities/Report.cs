@@ -14,10 +14,15 @@ namespace Domain.Entities
         public string Description { get; set; }
         public DateTime Time { get; set; }
 
-        public Report()
+        public Report(){}
+        public Report(string name, string description, DateTime time) : this()
         {
+            Id = Guid.NewGuid();
+            Name = name;
+            Description = description;
+            Time = time;
         }
- 
+
         public Teacher Teacher { get; set;}
 
         public Guid? GroupStudentId { get; set; }

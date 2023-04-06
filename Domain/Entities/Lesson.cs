@@ -20,6 +20,13 @@ namespace Domain.Entities
             StudentsOnLesson = new List<Student>();
         }
 
+        public Lesson(string name, string place, DateTime hoursAndMinutes) : this()
+        {
+            Id = Guid.NewGuid(); 
+            Name = name;
+            Place = place;
+            HoursAndMinutes = hoursAndMinutes;
+        }
         public Guid? DayId { get; set; }
         public Day Day { get; set; }
 

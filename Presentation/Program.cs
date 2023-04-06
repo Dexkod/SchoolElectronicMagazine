@@ -1,7 +1,7 @@
 using Infrastructure.DbContext;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<SchoolContext>();

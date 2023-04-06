@@ -20,7 +20,7 @@ namespace Infrastructure.DbContext
         public DbSet<TeachersAndGroupStudents> TeachersAndGroupStudents { get; set; }
 
         public SchoolContext(DbContextOptions<SchoolContext> options) : base(options){}
-
+        public SchoolContext(){}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LessonsAndStudents>()
