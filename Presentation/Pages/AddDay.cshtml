@@ -1,0 +1,112 @@
+﻿@page
+@using Presentation;
+@model Presentation.AddDayModel
+@{
+    ViewData["Title"] = "New Day";
+}
+
+<head>
+    <style>
+        .ErrorMessage
+        {
+            font-size: 13px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <form method="post" asp-page-handler="AddDay">
+            <p>
+                <label id="dateDayLabel">Дата дня</label>
+                <input type="date" name="DateDay" id="dateDayBtn"/>
+            </p>
+            <p class="ErrorMessageAddDay">@Model.ErrorMessageAddDay</p>
+            <div>
+                @{
+                    foreach (var lesson in AddDayModel.Lessons)
+                    {
+                        <p>Занятие</p>
+                        <p>@lesson.Name</p>
+                        <p>@lesson.Place</p>
+                        <p>@lesson.HoursAndMinutes.Hour:@lesson.HoursAndMinutes.Minute</p>
+                    }
+                }
+            </div>
+            <div>
+                <button formmethod="dialog" id="ChangeLessonBtn" onclick="window.putLessons.showModal()">Изменить</button>
+                <button id="AddLessonBtn" onclick="window.addLesson.showModal();" formmethod="dialog">Добавить Уроки</button>
+            </div>
+            <div>
+                <p></p>
+            </div>
+            <div>
+                <input type="submit" value="Сохранить"/>
+                <input type="reset" value="Очистить"/>
+            </div>
+            <div class="ErrorMessage">
+                @Model.ErrorMessageLesson
+            </div>
+        </form>
+
+        <div>
+            <dialog id="addLesson">
+                <form method="post" asp-page-handler="AddLesson">
+                    <div>
+                        <input type="hidden" id="dayId" name="DayId" />
+                    </div>
+                    <div>
+                        <p>
+                            <label for="timeNewLesson">Время пары в формате(hours:minute)</label>
+                            <input type="text" id="timeNewLesson" name="TimeNewLesson" />
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <label for="nameNewLesson">Название пары</label>
+                            <input type="text" id="nameNewLesson" name="NameNewLesson" />
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            <label for="placeNewLesson">Место проведения пары</label>
+                            <input type="text" id="placeNewLesson" name="PlaceNewLesson" />
+                        </p>
+                    </div>
+                    <div>
+                        <input type="submit" value="сохранить" />
+                    </div>
+                </form>
+                <button onclick="window.addLesson.close();">выйти</button>
+            </dialog>
+        </div>
+
+        <div>
+            <dialog id="putLessons">
+                <form method="post" asp-page-handler="PutLessons">
+                <table>
+                    <tr>
+                        <td>Название</td>
+                        <td>Время</td>
+                        <td>Место</td>
+                        <td>Удалить</td>
+                    </tr>
+                    @{
+                        foreach (var lesson in AddDayModel.Lessons)
+                        {
+                            <tr>
+                                <td><input type="text" name="NameLessons" value="@lesson.Name"/></td>
+                                <td><input type="text" name="Times" value="@lesson.HoursAndMinutes.Hour : @lesson.HoursAndMinutes.Minute" /></td>
+                                <td><input type="text" name="Places" value="@lesson.Place" /></td>
+                                <td><input type="checkbox" name="IsRemove" value="@lesson.Id" /></td>
+                            </tr>
+                        }
+                    }
+                    </table>
+                    <input type="submit" value="Сохранить" />
+                    <input type="button" value="выйти" onclick="window.putLessons.close();" />
+                </form>
+            </dialog>
+        </div>
+    </div>
+</body>

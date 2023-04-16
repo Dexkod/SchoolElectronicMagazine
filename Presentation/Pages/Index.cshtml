@@ -5,10 +5,24 @@
 }
 <head>
     <link href="/css/StyleIndex.css" rel="stylesheet" type="text/css">
+    <style>
+        #errorMessagePostLesson 
+        {
+            text-align: center;
+            font-size: 13px;
+            color: red;
+        }
+
+        #addDayBtn{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+    </style>
 </head>
 <body>
     <div class="theGap">
-
     </div>
     <div class="cards">
         @{
@@ -17,6 +31,7 @@
                 <div class="card">
                     <div class="DayOfWeek">
                         <p><h7>@day.DayOfTheWeek</h7></p>
+                        <p>@day.Time.Month-@day.Time.Day</p>
                     </div>
                     <div class="lessons">
                         @{
@@ -30,22 +45,31 @@
                             }
                         }
                     </div>
-                    <div>
-                        <button type="button" class="PostLesson" id="@day.Id" >Добавить</button>
-                        <button class="putLesson" >Изменить</button>
+                    <div id="BtnsLesson">
+                        <button type="button" class="PostLesson" id="@day.Id" onClick="AddLesson_click(this.id)">Добавить</button>
+                        <form method="post" asp-page-handler="GetDay">
+                            <input type="hidden" id="dayIdPutLessons" name="DayId" value="@day.Id" />
+                            <button class="putLesson" id="@day.Id">Изменить</button>
+                        </form>
                     </div>
                 </div>
                 
             }
         }
-
-
     </div>
+
+    <div>
+        <p id="errorMessagePostLesson" >@Model.ErrorMessagePostLesson</p>
+    </div>
+    <div id="addDayBtn">
+        <button onClick="window.location.href = 'AddDay'">Добавить следующий день</button>
+    </div>
+
     <div>
         <dialog id="addLesson">
-            <form method="post">
+            <form method="post" asp-page-handler="AddLesson">
                 <div>
-                    <input type="text" id="dayId" name="DayId" />
+                    <input type="hidden" id="dayIdAddLesson" name="DayId" />
                 </div>
                 <div>
                     <p>
@@ -77,13 +101,53 @@
             Я скрыт от пользователя
         </dialog>
     </div>
+
+    <div>
+        <dialog id="putLessons">
+            <form method="post" asp-page-handler="PutLessons">
+                <div>
+                    <input type="hidden" id="dayIdPutLessons" name="DayId" />
+                </div>
+                <table>
+                    <tr>
+                        <td>Название</td>
+                        <td>Время</td>
+                        <td>Место</td>
+                        <td>Удалить</td>
+                    </tr>
+                    @{
+                        foreach (var lesson in IndexModel.PutDay.Lessons)
+                        {
+                            <tr>
+                                <td><input type="text" name="NameLessons" value="@lesson.Name" /></td>
+                                <td><input type="text" name="Times" value="@lesson.HoursAndMinutes.Hour : @lesson.HoursAndMinutes.Minute" /></td>
+                                <td><input type="text" name="Places" value="@lesson.Place" /></td>
+                                <td><input type="checkbox" name="IsRemove" value="@lesson.Id" /></td>
+                            </tr>
+                        }
+                    }
+                </table>
+                <input type="submit" value="Сохранить" />
+                <input type="button" value="выйти" onclick="window.putLessons.close();" />
+            </form>
+        </dialog>
+    </div>
 </body>
+
+@{
+    if(IndexModel.PutDay.Lessons.Count > 0)
+    {
+        <script>
+            window.putLessons.showModal();
+        </script>
+    }
+}
 <script>
-    var button = document.querySelector('.PostLesson');
-    button.addEventListener('click', function () {
-        var id = button.dataset.id;
-        var input = document.getElementById('dayId');
-        input.value = id;
+    function AddLesson_click(clicked_id) 
+    {
+        var input = document.getElementById('dayIdAddLesson');
+        input.value = clicked_id;
         window.addLesson.showModal();
-    });
+    }
+    
 </script>
