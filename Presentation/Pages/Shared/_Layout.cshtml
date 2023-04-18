@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SchoolElectronicMagazine</title>
     <link href="/css/_Layout.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 </head>
 <body>
     <ul class="menu-main">
         <li><a href="/" >Главная</a></li>
-        <li><a href="">Просмотр групп</a></li>
+        <li><a href="/Students/AllGroupStudent">Просмотр групп</a></li>
         <li><a href="">Сформировать отчет</a></li>
     </ul>
     
@@ -18,6 +19,11 @@
             @RenderBody()
         </main>
     </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
 
 </body>
 </html>

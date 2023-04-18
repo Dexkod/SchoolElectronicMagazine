@@ -1,0 +1,21 @@
+﻿@page
+@model Presentation.Pages.Reports.CreateReportModel
+@{
+}
+
+<style>
+
+</style>
+<div>
+    <p><h5>Все истории</h5></p>
+    <ul class="list-group">
+        @{
+            foreach(var report in Model.Reports)
+            {
+                <li class="list-group-item">@report.Name
+                <button class=""></button>
+                </li>
+            }
+        }
+    </ul>
+</div>

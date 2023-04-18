@@ -1,0 +1,73 @@
+﻿@page
+@using Presentation.Pages.Reports;
+@model Presentation.Pages.Reports.EditGroupStudentsModel
+@{
+}
+
+<style>
+    #nameGroup
+    {
+        text-align: center;
+    }
+
+    .CPDBtn
+    {
+        display: flex;
+        justify-content: right; 
+    }
+</style>
+<div>
+    <h3 id="nameGroup">@EditGroupStudentsModel.Group.Name</h3>
+</div>
+
+<div class="LastReport">
+    <p><h5>Последний Отчет</h5></p>
+    @{
+        if (@EditGroupStudentsModel.Group.Report == null)
+        {
+            <label>Нет отчетов</label>
+        }
+        else
+        {
+            <label>@EditGroupStudentsModel.Group.Report.Name</label>
+        }
+    }
+    <div class="CPDBtn">
+        <form>
+            <button formmethod="dialog" class="btn btn-dark" onclick="window.">Заменить/Добавить</button>
+        </form>      
+        <button formmethod="dialog" class="btn btn-info" onclick="window.PutReport.showModal()">Изменить</button>
+        <button formmethod="dialog" class="btn btn-danger" onclick="window.RemoveReport.showModal()">Удалить</button>
+    </div>
+</div>
+<div>
+    <p><h5>Студенты</h5></p>
+    <button formmethod="dialog" class="btn btn-dark" onclick="">Добавить Нового</button>
+    <button formmethod="dialog" class="btn btn-dark" onclick="">Добавить из другой группы</button>
+</div>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>ФИО</td>
+                <td>Изменить</td>
+                <td>Удалить</td>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+<div>
+    <dialog id="AddReport">
+        <form method="post" asp-page-handler="AddReport">
+
+        </form>
+    </dialog>
+</div>
+
+<div>
+    <dialog id="PutReport">
+
+    </dialog>
+</div>
+

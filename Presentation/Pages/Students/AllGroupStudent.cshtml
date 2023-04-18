@@ -1,0 +1,89 @@
+﻿@page
+@model Presentation.Pages.Reports.AllGroupStudent
+@{
+}
+
+<style>
+    #BtnMoreDetails
+    {
+        float: right;
+        margin-right: 5px;
+    }
+    #BtnDelete
+    {
+        float: right;
+        margin-left: 5px;
+    }
+    .Search
+    {
+        display: flex;
+        justify-content: center;
+        margin: 5px;
+        height: 50px;
+    }
+    #AddGroup {
+        display: flex;
+        justify-content: right;
+    }
+    #BtnSearch
+    {
+        margin: 5px;
+        height: 35px;
+    }
+    #TextSearch
+    {
+        margin: 5px;
+        height: 35px; 
+        width: 300px;
+    }
+    #ErrorMessage
+    {
+        font-size: 13px;
+        text-align: center;
+        color: red;
+    }
+</style>
+
+<div class="Search">
+    <form method="post" asp-page-handler="SearchGroup">
+        <input type="text" id="TextSearch" class="text-black" name="NameGroup"/>
+        <button type="submit" id="BtnSearch" class="btn btn-danger">Найти</button>
+    </form>
+</div>
+<div>
+    <p id="ErrorMessage">@Model.ErrorMessage</p>
+</div>
+<div class="allGroup">
+    <ul class="list-group">
+        @{
+            foreach(var group in Model.groupStudents)
+            {
+                if (group.Name.Contains(Model.ValidationString))
+                {
+                    <li class="list-group-item">@group.Name
+                        <form method="post">
+                        <input type="hidden" value="@group.Id" name="GroupId">
+                        <button formmethod="post" asp-page-handler="RemoveGroup" id="BtnDelete" class="btn btn-primary">Удалить</button>
+                        <button formmethod="post" asp-page-handler="MoreDetails" id="BtnMoreDetails" class="btn btn-primary">Подробнее</button>
+                        </form>
+                    </li>
+                }
+            }
+        }
+    </ul>
+    <div id="AddGroup" class="btn-group-vertical" role="group" aria-label="Vertical button group">
+        <button class="btn btn-dark" onclick="window.addGroup.showModal()">
+            Добавить группу
+        </button>
+    </div>
+    
+    <div>
+        <dialog id="addGroup">
+            <form method="post" asp-page-handler="AddGroup">
+                <label>Введите имя группы</label>
+                <input type="text" name="NameGroup"/>
+                <button type="submit" class="btn btn-dark">Сохранить</button>
+            </form>
+        </dialog>
+    </div>
+</div>
