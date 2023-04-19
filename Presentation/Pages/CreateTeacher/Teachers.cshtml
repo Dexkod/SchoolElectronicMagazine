@@ -1,0 +1,141 @@
+﻿@page
+@using Presentation.Pages.CreateTeacher;
+@model Presentation.Pages.CreateTeacher.TeachersModel
+@{
+}
+<style>
+    .CloseDialog
+    {
+        display: flex;
+        justify-content: right;
+        margin: 10px;
+    }
+    .TeacherFeatures
+    {
+        text-align: center;
+        width: 400px;
+    }
+    .ErrorMessage
+    {
+        font-size: 13px;
+        text-align: center;
+        color: red;
+        margin: 10px;
+    }
+    .TextTeacher
+    {
+        margin: 10px;
+        width: 300px;
+    }
+</style>
+<div>
+    <p><h5>Учителя</h5></p>
+</div>
+<div >
+    <p class="ErrorMessage">@Model.ErrorMessage</p>
+</div>
+<div>
+    <button formmethod="dialog" class="btn btn-dark" onclick="window.AddTeacher.showModal()">Добавить преподавателя</button>
+</div>
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>ФИО</td>
+                <td>Информация</td>
+                <td>Изменить</td>
+                <td>Удалить</td>
+            </tr>
+        </thead>
+        @{
+            foreach(var teacher in Model.Teachers)
+            {
+                <tr>
+                    <td><label>@teacher.FirstName @teacher.LastName @teacher.MiddleName</label></td>
+                    <td><label>@teacher.Desciption</label></td>
+                    <td><form method="post" asp-page-handler="GetTeacher">
+                        <input type="hidden" name="TeacherId" value="@teacher.Id"/>
+                        <button type="submit" class="btn btn-warning">Изменить</button>
+                    </form></td>
+                    <td><button formmethod="dialog" id="@teacher.Id" class="btn btn-danger" onclick="GetId(this.id)">Удалить</button></td>
+                </tr>
+            }
+        }
+    </table>
+</div>
+
+<div>
+    <dialog id="AddTeacher">
+        <form method="post" asp-page-handler="CreateTeacher">   
+            <div class="CloseDialog">
+                <button type="reset" class="btn btn-close" onclick="window.AddTeacher.close()" />
+            </div>
+            <div class="TeacherFeatures">
+                <p>Имя</p>
+                <input type="text" name="TeacherFirstName"/>
+                <p>Фамилия</p>
+                <input type="text" name="TeacherLastName" />
+                <p>Отчество</p>
+                <input type="text" name="TeacherMiddleName" />
+                <p>Описание</p>
+                <textarea name="Description"></textarea>
+            </div>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-dark">Добавить</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<div>
+    <dialog id="PutTeacher">
+        <form method="post" asp-page-handler="PutTeacher">
+            <div class="CloseDialog">
+                <button type="reset" class="btn btn-close" onclick="window.PutTeacher.close()" />
+            </div>
+            <div class="TeacherFeatures">
+                <input class="TextTeacher" type="text" name="TeacherFirstName" value="@TeachersModel.PutTeacher.FirstName" />
+                <input class="TextTeacher" type="text" name="TeacherLastName" value="@TeachersModel.PutTeacher.LastName" />
+                <input class="TextTeacher" type="text" name="TeacherMiddleName" value="@TeachersModel.PutTeacher.MiddleName" />
+                <textarea class="TextTeacher" name="Description">@TeachersModel.PutTeacher.Desciption</textarea>
+            </div>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-dark">Сохранить</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<div>
+    <dialog id="RemoveTeacher">
+        <div class="CloseDialog">
+            <button type="reset" class="btn btn-close" onclick="window.RemoveTeacher.close()" />
+        </div>
+        <p class="text-center">Вы уверены что хотите удалить данный элемент?</p>
+        <form method="post" asp-page-handler="RemoveTeacher">
+            <input type="hidden" name="TeacherId" id="RemoveTeacherId"/>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-danger" onclick="window.RemoveTeacher.close()">Удалить</button> 
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<script>
+    function GetId(id)
+    {
+        document.getElementById('RemoveTeacherId').value = id;
+        window.RemoveTeacher.showModal();
+    }
+
+    
+</script>
+
+@{
+    if (TeachersModel.PutTeacher.FirstName != null)
+    {
+        <script>
+            window.PutTeacher.showModal();
+        </script>
+    }
+}

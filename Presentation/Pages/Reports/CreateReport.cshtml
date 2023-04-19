@@ -4,18 +4,112 @@
 }
 
 <style>
+    #ReportLabel
+    {
+        text-align: center;
+    }
+    .PutOrDeleteBtn
+    {
+        display: flex;
+        justify-content: right;
+    }
 
+    #CreateReportBtn 
+    {
+        margin: 15px;
+    }
+    #NameReportText
+    {
+        margin-bottom: 20px;
+    }
+
+    .TeachersAndGroups
+    {
+        width: 300px;
+    }
+    .CreateReportBtns 
+    {
+        display: flex;
+        justify-content: right;
+    }
+
+    .Teachers 
+    {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .FormReport 
+    {
+        display: flex;
+        justify-content: center;
+    }
+
+    #NameReportLabel 
+    {
+        margin-top: 15px;
+        text-align: center;
+    }
 </style>
 <div>
-    <p><h5>Все истории</h5></p>
+    <p id="ReportLabel"><h5>Отчеты</h5></p>
+    <div>
+        <button id="CreateReportBtn" formmethod="dialog" class="btn btn-dark"
+                onclick="window.CreateReport.showModal()">Сформировать Отчет</button>
+    </div>
     <ul class="list-group">
         @{
             foreach(var report in Model.Reports)
             {
                 <li class="list-group-item">@report.Name
-                <button class=""></button>
+                    <div class="PutOrDeleteBtn">
+                        <button class="btn btn-check">Подробнее</button>
+                        <button class="btn btn-warning">Удалить</button>
+                    </div>
                 </li>
             }
         }
     </ul>
+</div>
+
+<div>
+    <dialog id="CreateReport">
+        <form method="post" asp-page-handler="CreateReport">
+            <div class="CreateReportBtns">
+                <button type="reset" class="btn btn-close" onclick="window.CreateReport.close()" />
+            </div>
+            
+            <p id="NameReportLabel">Название Отчета</p>
+            <div class="FormReport">
+                <input id="NameReportText" type="text" name="NameReport"/>
+            </div>
+            <div class="TeachersAndGroups">
+                <div>
+                    <select class="form-select" name="GroupId">
+                        <option selected>Выберете Группу</option>
+                        @{
+                            foreach(var group in Model.Groups)
+                            {
+                                <option asp-for="K" value="@group.Id">@group.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="Teachers">
+                    <select class="form-select" name="TeacherId">
+                        <option selected>Выберите учителя</option>
+                        @{
+                            foreach(var teacher in Model.Teachers)
+                            {
+                                <option value="@teacher.Id" ></option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="CreateReportBtns">
+                <button type="submit" class="btn btn-dark">Сохранить</button>
+            </div>
+        </form>
+    </dialog>
 </div>
