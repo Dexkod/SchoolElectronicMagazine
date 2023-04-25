@@ -19,6 +19,7 @@ namespace Domain.Entities
         {
             Lessons = new List<Lesson>();
             GroupStudents = new List<GroupStudents>();
+            Reports = new List<Report>();
         }
 
         public Teacher(string firstName, string lastName, string middleName, string Description) 
@@ -31,8 +32,7 @@ namespace Domain.Entities
             Desciption = Description;
         }
 
-        public Guid? ReportId { get; set; }
-        public Report Report { get; set; }
+        public ICollection <Report> Reports { get; set; }
 
         public ICollection<Lesson> Lessons { get; set; }
 

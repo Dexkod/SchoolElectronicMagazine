@@ -1,4 +1,5 @@
 ﻿@page
+@using Presentation.Pages.Reports;
 @model Presentation.Pages.Reports.CreateReportModel
 @{
 }
@@ -50,21 +51,92 @@
         margin-top: 15px;
         text-align: center;
     }
+    .Group
+    {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    #ChooseGroup 
+    {
+        margin-left: 20px;
+    }
+
+    .ErrorMessage
+    {
+        color: red;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    #CreateReport 
+    {
+        width: 700px;
+    }
+    #MarginRight
+    {
+        margin-right: 15px; 
+    }
+    #PutReportDialog
+    {
+        width: 1000px;
+    }
+    .FullNameStudent
+    {
+        width: 300px;
+    }
 </style>
+
+<div class="Group">
+    <p id="ChooseGroup"><h5>Выберете группу</h5></p>
+    <form method="post" asp-page-handler="GetGroup">
+        <div class="input-group">
+            @{
+                var strGroup = CreateReportModel.Group.Name ?? "";
+            }
+            <select id="ChooseGroup" class="form-select" name="GroupId">
+                <option selected>@strGroup</option>
+                @{
+                    Infrastructure.DbContext.SchoolContext context = new();
+                    var Groups = context.GroupsStudents.ToList();
+
+                    foreach (var group in Groups)
+                    {
+                        <option value="@group.Id">@group.Name</option>
+                    }
+                }
+            </select>
+            <span class="input-group-btn">
+                <button id="ChooseGroup" type="submit" class="btn btn-warning">Найти</button>
+            </span>
+        </div>
+    </form>
+</div>
+<div>
+    <p class="ErrorMessage">@Presentation.Pages.Reports.CreateReportModel.ErrorMessage</p>
+</div>
+<div>
+    <button id="CreateReportBtn" formmethod="dialog" class="btn btn-dark"
+            onclick="window.CreateReport.showModal()">
+                Сформировать Отчет
+    </button>
+</div>
 <div>
     <p id="ReportLabel"><h5>Отчеты</h5></p>
-    <div>
-        <button id="CreateReportBtn" formmethod="dialog" class="btn btn-dark"
-                onclick="window.CreateReport.showModal()">Сформировать Отчет</button>
-    </div>
+    
     <ul class="list-group">
         @{
             foreach(var report in Model.Reports)
             {
                 <li class="list-group-item">@report.Name
                     <div class="PutOrDeleteBtn">
-                        <button class="btn btn-check">Подробнее</button>
-                        <button class="btn btn-warning">Удалить</button>
+                        <form method="post" asp-page-handler="SetPutReport">
+                            <input type="hidden" value="@report.Id" name="ReportId"/>
+                            <button type="submit" id="MarginRight" class="btn btn-warning">Изменить</button>
+                        </form>
+                        <button id="@report.Id" class="btn-danger" onclick="RemoveReportGetId(this.id)">Удалить</button>
                     </div>
                 </li>
             }
@@ -72,7 +144,7 @@
     </ul>
 </div>
 
-<div>
+<div class="DiaologCreateReport">
     <dialog id="CreateReport">
         <form method="post" asp-page-handler="CreateReport">
             <div class="CreateReportBtns">
@@ -81,31 +153,51 @@
             
             <p id="NameReportLabel">Название Отчета</p>
             <div class="FormReport">
-                <input id="NameReportText" type="text" name="NameReport"/>
+                <input id="NameReportText" type="text" name="NameReport" />
             </div>
             <div class="TeachersAndGroups">
-                <div>
-                    <select class="form-select" name="GroupId">
-                        <option selected>Выберете Группу</option>
-                        @{
-                            foreach(var group in Model.Groups)
-                            {
-                                <option asp-for="K" value="@group.Id">@group.Name</option>
-                            }
-                        }
-                    </select>
-                </div>
                 <div class="Teachers">
                     <select class="form-select" name="TeacherId">
                         <option selected>Выберите учителя</option>
                         @{
-                            foreach(var teacher in Model.Teachers)
+                            Infrastructure.DbContext.SchoolContext contextNew = new();
+
+                            foreach (var teacher in Model.Teachers)
                             {
-                                <option value="@teacher.Id" ></option>
+                                <option value="@teacher.Id">@teacher.FirstName @teacher.LastName @teacher.MiddleName</option>
                             }
                         }
                     </select>
                 </div>
+            <div class="Studnts">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td><label>ФИО</label></td>
+                            <td><label>Баллов на данный момент</label></td>
+                            <td><label>Всего</label></td>
+                        </tr>
+                    </thead>
+                @{
+                    var students = contextNew.Students
+                        .Where(x => x.GroupStudent.Id.Equals(CreateReportModel.Group.Id))
+                        .ToList();
+
+                   
+                    foreach(var student in students)
+                    {
+                        <tr>
+                            <td><label>@student.FirstName @student.LastName @student.MiddleName</label></td>
+                            <td>
+                                <input type="hidden" value="@student.Id" name="StudentId"/>
+                                <input type="text" name="CurrentScore" />
+                            </td>
+                            <td><input type="text" name="AllScore"/></td>
+                        </tr>
+                    }  
+                }
+                </table>
+            </div>
             </div>
             <div class="CreateReportBtns">
                 <button type="submit" class="btn btn-dark">Сохранить</button>
@@ -113,3 +205,122 @@
         </form>
     </dialog>
 </div>
+
+<div>
+    <dialog id="PutReport">
+        <form method="post" asp-page-handler="CreateReport">
+            <div class="CreateReportBtns">
+                <button type="reset" class="btn btn-close" onclick="window.CreateReport.close()" />
+            </div>
+            <div>
+
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<div>
+    <dialog id="RemoveReport">
+        <form method="post" asp-page-handler="RemoveReport">
+            <div class="CreateReportBtns">
+                <button type="reset" class="btn btn-close" onclick="window.CreateReportBtns.close()" />
+            </div>
+            <div>
+                <input type="hidden" id="ReportId" name="ReportId"/>
+                <h5>Вы уверены что хотите удалить данный отчет?</h5>
+            </div>
+            <div class="CreateReportBtns">
+                <button type="submit" class="btn btn-danger">Удалить</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<div>
+    <dialog id="PutReportDialog">
+        <div class="CreateReportBtns">
+            <button class="btn btn-close" onclick="window.PutReportDialog.close()" />
+        </div>
+        <form method="post" asp-page-handler="PutReport">
+            <input type="hidden" name="PutReportId" value="@CreateReportModel.PutReport.Id" />
+            <p id="NameReportLabel">Название Отчета</p>
+            <div class="FormReport">
+                <input id="NameReportText" type="text" name="NameReport" value="@CreateReportModel.PutReport.Name" />
+            </div>
+            <div class="Teachers">
+                <select class="form-select" name="TeacherId">
+                    @{
+                        var teacherDefault = CreateReportModel.PutReport.Teacher ?? new Domain.Entities.Teacher();
+                        string teacherFullName = $"{teacherDefault.FirstName} {teacherDefault.LastName} {teacherDefault.MiddleName}";
+                    }
+                    <option selected value="@teacherDefault.Id">@teacherFullName</option>
+                    @{
+                        Infrastructure.DbContext.SchoolContext contextNew2 = new();
+
+                        foreach (var teacher in Model.Teachers)
+                        {
+                            <option value="@teacher.Id">@teacher.FirstName @teacher.LastName @teacher.MiddleName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="Studnts">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <td><label>ФИО</label></td>
+                            <td><label>Баллов на данный момент</label></td>
+                            <td><label>Всего</label></td>
+                        </tr>
+                    </thead>
+                    @{
+
+                        string[] description = CreateReportModel.PutReport.Description == null
+                            ? new string[] { } 
+                            : CreateReportModel.PutReport.Description.Split('\n').ToArray();
+
+                        foreach (var line in description)
+                        {
+                            string[] studentDescription = line.Split(' ').Select(x => x.Replace("\r",""))
+                                .Where(x => !x.Equals("")).ToArray();
+
+                            if (studentDescription.Length == 5)
+                            {
+                                <tr>
+                                    <td><input class="FullNameStudent" type="text" name="FullName" readonly value="@studentDescription[0] @studentDescription[1] @studentDescription[2]" /></td>
+                                    <td>
+                                        <input type="text" name="CurrentScore" value="@studentDescription[3]" />
+                                    </td>
+                                    <td><input type="text" name="AllScore" value="@studentDescription[4]" /></td>
+                                </tr>
+                            }
+                            
+                        }
+                    }
+                </table>
+            </div>
+            <div class="CreateReportBtns">
+                <button type="submit" class="btn btn-warning">Изменить</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<script>
+    function RemoveReportGetId(id)
+    {
+        document.getElementById('ReportId').value = id;
+        window.RemoveReport.showModal();
+    }
+</script>
+
+@{
+    if (CreateReportModel.PutReport.Name != null)
+    {
+        <script>
+            window.PutReportDialog.showModal();
+        </script>
+        
+        CreateReportModel.PutReport = new();
+    }
+}

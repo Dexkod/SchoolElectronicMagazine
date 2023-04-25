@@ -48,6 +48,7 @@ namespace Presentation
             context.SaveChangesAsync();
 
             Lessons = new();
+            Response.Redirect("/Index");
         }
 
         public void OnPostAddLesson(string TimeNewLesson, string NameNewLesson, string PlaceNewLesson)

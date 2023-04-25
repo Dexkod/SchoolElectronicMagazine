@@ -15,6 +15,28 @@
         display: flex;
         justify-content: right; 
     }
+
+    .StudentFeatures 
+    {
+        text-align: center;
+        width: 400px;
+    }
+    .CloseDialog 
+    {
+        display: flex;
+        justify-content: right;
+        margin: 10px;
+    }
+
+    #SearchText 
+    {
+        margin-left: 10px;
+    }
+
+    #MarginRight
+    {
+        margin-right: 15px;
+    }
 </style>
 <div>
     <h3 id="nameGroup">@EditGroupStudentsModel.Group.Name</h3>
@@ -23,27 +45,42 @@
 <div class="LastReport">
     <p><h5>Последний Отчет</h5></p>
     @{
-        if (@EditGroupStudentsModel.Group.Report == null)
+        var reports = Model.context.Reports
+                .Where(x => x.GroupStudents.Id.Equals(EditGroupStudentsModel.Group.Id))
+                .ToList();
+
+        if (reports.Count == 0)
         {
-            <label>Нет отчетов</label>
+            <h5><label>Нет отчетов</label></h5>
+            <div class="CPDBtn">
+                <form method="post" asp-page-handler="AddReport">
+                    <button type="submit" class="btn btn-dark">Добавить новый</button>
+                </form>
+            </div>
         }
         else
         {
-            <label>@EditGroupStudentsModel.Group.Report.Name</label>
+            var report = reports
+                .FirstOrDefault(x => x.Time.Equals(reports.Max(x => x.Time)));
+            <h5><label>@report.Name</label></h5>
+            <div class="CPDBtn">
+                <form method="post" asp-page-handler="AddReport">
+                    <button type="submit" id="MarginRight" class="btn btn-dark">Добавить новый</button>
+                </form>
+                <form method="post" asp-page-handler="PutLastReport">
+                    <input type="hidden" name="PutReportId" value="@report.Id">
+                    <button id="MarginRight" class="btn btn-info">Изменить</button>
+                </form>
+                <button formmethod="dialog" id="@report.Id" class="btn btn-danger" onclick="SetRemoveReportId(this.id)">Удалить</button>
+            </div>
         }
     }
-    <div class="CPDBtn">
-        <form>
-            <button formmethod="dialog" class="btn btn-dark" onclick="window.">Заменить/Добавить</button>
-        </form>      
-        <button formmethod="dialog" class="btn btn-info" onclick="window.PutReport.showModal()">Изменить</button>
-        <button formmethod="dialog" class="btn btn-danger" onclick="window.RemoveReport.showModal()">Удалить</button>
-    </div>
+    
 </div>
 <div>
     <p><h5>Студенты</h5></p>
-    <button formmethod="dialog" class="btn btn-dark" onclick="">Добавить Нового</button>
-    <button formmethod="dialog" class="btn btn-dark" onclick="">Добавить из другой группы</button>
+    <button formmethod="dialog" class="btn btn-dark" onclick="window.CreateNewStudent.showModal()">Добавить Нового</button>
+    <button formmethod="dialog" class="btn btn-dark" onclick="window.BindingStudent.showModal()">Добавить из другой группы</button>
 </div>
 <div>
     <table class="table table-striped">
@@ -54,20 +91,178 @@
                 <td>Удалить</td>
             </tr>
         </thead>
+        <tbody>
+            @{ foreach(var student in Model.Students)
+                {
+                    <tr>
+                        <td><label>@student.FirstName @student.LastName @student.MiddleName</label></td>
+                        <td>
+                            <form method="post" asp-page-handler="GetPutStudent">
+                                <input type="hidden" name="StudentId" value="@student.Id"/>
+                                <button type="submit" class="btn btn-warning">Изменить</button>
+                            </form>
+                        </td>
+                        <td>
+                            <button formmethod="dialog" id="@student.Id" class="btn btn-danger" onclick="GetIdRemoveStudent(this.id)">Удалить</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
     </table>
 </div>
 
 <div>
-    <dialog id="AddReport">
-        <form method="post" asp-page-handler="AddReport">
+    <dialog id="RemoveReport">
+        <div class="CloseDialog">
+            <button type="reset" class="btn btn-close" onclick="window.RemoveReport.close()" />
+        </div>
+        <form method="post" asp-page-handler="RemoveReport">
+            <input type="hidden" id="RemoveReportId" name="RemoveReportId" />
+            <h5>Вы уверены что хотите удалить этот отчет</h5>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-danger" onclick="window.CreateNewStudent.close()">Удалить</button>
+            </div>
+        </form>
 
+    </dialog>
+</div>
+
+<div>
+    <dialog id="CreateNewStudent">
+        <div class="CloseDialog">
+            <button type="reset" class="btn btn-close" onclick="window.CreateNewStudent.close()" />
+        </div>
+        <form method="post" asp-page-handler="CreateNewStudent">
+            <div class="StudentFeatures">
+                <p>Имя</p>
+                <input type="text" name="StudentFirstName" />
+                <p>Фамилия</p>
+                <input type="text" name="StudentLastName" />
+                <p>Отчество</p>
+                <input type="text" name="StudentMiddleName" />
+            </div>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-dark" onclick="window.CreateNewStudent.close()">Добавить</button>
+            </div>
         </form>
     </dialog>
 </div>
 
 <div>
-    <dialog id="PutReport">
-
+    <dialog id="PutStudent">
+        <div class="CloseDialog">
+            <button type="reset" class="btn btn-close" onclick="window.PutStudent.close()" />
+        </div>
+        <form method="post" asp-page-handler="PutStudent">
+            <div class="StudentFeatures">
+                <p>Имя</p>
+                <input type="text" name="StudentFirstName" value="@EditGroupStudentsModel.PutStudent.FirstName" />
+                <p>Фамилия</p>
+                <input type="text" name="StudentLastName" value="@EditGroupStudentsModel.PutStudent.LastName" />
+                <p>Отчество</p>
+                <input type="text" name="StudentMiddleName" value="@EditGroupStudentsModel.PutStudent.MiddleName" />
+            </div>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-dark" onclick="window.PutStudent.close()">Сохранить</button>
+            </div>
+        </form>
     </dialog>
 </div>
 
+<div>
+    <dialog id="RemoveStudent">
+        <div class="CloseDialog">
+            <button type="reset" class="btn btn-close" onclick="window.RemoveStudent.close()" />
+        </div>
+        <p class="text-center">Вы уверены что хотите удалить данный элемент?</p>
+        <form method="post" asp-page-handler="RemoveStudent">
+            <input type="hidden" name="StudentId" id="RemoveStudentId" />
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-danger" onclick="window.RemoveTeacher.close()">Удалить</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<div>
+    <dialog id="BindingStudent">
+        <div class="CloseDialog">
+            <button type="reset" class="btn btn-close" onclick="window.BindingStudent.close()" />
+        </div>  
+        <div>
+            <form method="post" asp-page-handler="SearchStudents">
+                <input type="text" name="ValidationString"/> 
+                <input type="submit" id="SearchText" class="btn btn-info" value="Найти" />
+            </form>
+        </div>
+        <form method="post" asp-page-handler="BindingStudent">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td><label>ФИО</label></td>
+                        <td><label>Группа</label></td>
+                        <td><label>Добавить</label></td>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                    @{
+                        var allStudents = Model.context.Students.ToList();
+                        var allGroup = Model.context.GroupsStudents.ToArray();
+
+                        var goodStudents = allStudents
+                        .Where(x => string.Join("", x.FirstName, x.LastName, x.MiddleName)
+                                .Contains(EditGroupStudentsModel.ValidationStudent) &&
+                                (x.GroupStudent == null || 
+                                !x.GroupStudent.Id.Equals(EditGroupStudentsModel.Group.Id)))
+                        .ToList();
+                        foreach (var student in goodStudents)
+                        {
+                            string NameGroup = student.GroupStudent == null ? "Пусто" : student.GroupStudent.Name;
+                            <tr>
+                                <td><label>@student.FirstName @student.LastName @student.MiddleName</label></td>
+                                <td><label>@NameGroup</label></td>
+                                <td><input type="checkbox" value="@student.Id" name="StudentId"/></td>
+                            </tr>
+                        }
+                    }    
+                </tbody>
+            </table>
+            <div class="CloseDialog">
+                <button type="submit" class="btn btn-dark" onclick="window.BindingStudent.close()">Сохранить</button>
+            </div>
+        </form>
+    </dialog>
+</div>
+
+<script>
+    function GetIdRemoveStudent(id) 
+    {
+        document.getElementById('RemoveStudentId').value = id;
+        window.RemoveStudent.showModal();
+    }
+
+    function SetRemoveReportId(id)
+    {
+        document.getElementById('RemoveReportId').value = id;
+        window.RemoveReport.showModal();
+    }
+</script>
+@{
+    if (EditGroupStudentsModel.PutStudent.FirstName != null)
+    {
+        <script>
+            window.PutStudent.showModal();
+        </script>
+        EditGroupStudentsModel.PutStudent = new();
+    }
+    if (!EditGroupStudentsModel.ValidationStudent.Equals(""))
+    {
+        <script>
+            window.BindingStudent.showModal();
+        </script>
+
+        EditGroupStudentsModel.ValidationStudent = "";
+    }
+}

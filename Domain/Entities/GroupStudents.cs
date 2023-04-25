@@ -25,8 +25,6 @@ namespace Domain.Entities
             Name = name;
         }
 
-        public Guid? ReportId { get; set; }
-        public Report Report { get; set; }
 
         public ICollection<Teacher> Teachers { get; set; }
 

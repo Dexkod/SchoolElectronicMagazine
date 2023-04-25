@@ -23,6 +23,7 @@ namespace Domain.Entities
             Time = time;
         }
 
+        public Guid? TeacherId { get; set; }
         public Teacher Teacher { get; set;}
 
         public Guid? GroupStudentId { get; set; }

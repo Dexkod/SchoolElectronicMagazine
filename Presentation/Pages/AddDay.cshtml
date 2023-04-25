@@ -12,37 +12,51 @@
             font-size: 13px;
             color: red;
         }
+        .All
+        {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .Date
+        {
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <div>
+    <div class="All">
         <form method="post" asp-page-handler="AddDay">
-            <p>
-                <label id="dateDayLabel">Дата дня</label>
+            <div class="Date">
+                <p id="dateDayLabel">Дата дня</p>
                 <input type="date" name="DateDay" id="dateDayBtn"/>
-            </p>
-            <p class="ErrorMessageAddDay">@Model.ErrorMessageAddDay</p>
+            </div>
+            <p class="ErrorMessage">@Model.ErrorMessageAddDay</p>
             <div>
+                <ul class="list-group">
                 @{
                     foreach (var lesson in AddDayModel.Lessons)
                     {
-                        <p>Занятие</p>
-                        <p>@lesson.Name</p>
-                        <p>@lesson.Place</p>
-                        <p>@lesson.HoursAndMinutes.Hour:@lesson.HoursAndMinutes.Minute</p>
+                        <li>
+                            <p>Занятие</p>
+                            <p>@lesson.Name</p>
+                            <p>@lesson.Place</p>
+                            <p>@lesson.HoursAndMinutes.Hour:@lesson.HoursAndMinutes.Minute</p>
+                        </li>
                     }
                 }
+                </ul>
             </div>
             <div>
-                <button formmethod="dialog" id="ChangeLessonBtn" onclick="window.putLessons.showModal()">Изменить</button>
-                <button id="AddLessonBtn" onclick="window.addLesson.showModal();" formmethod="dialog">Добавить Уроки</button>
+                <button class="btn btn-warning" formmethod="dialog" id="ChangeLessonBtn" onclick="window.putLessons.showModal()">Изменить</button>
+                <button class="btn btn-dark" id="AddLessonBtn" onclick="window.addLesson.showModal();" formmethod="dialog">Добавить Уроки</button>
             </div>
             <div>
                 <p></p>
             </div>
             <div>
-                <input type="submit" value="Сохранить"/>
-                <input type="reset" value="Очистить"/>
+                <input class="btn btn-dark" type="submit" value="Сохранить"/>
+                <input class="btn btn-check" type="reset" value="Очистить"/>
             </div>
             <div class="ErrorMessage">
                 @Model.ErrorMessageLesson
@@ -74,10 +88,10 @@
                         </p>
                     </div>
                     <div>
-                        <input type="submit" value="сохранить" />
+                        <input class="btn btn-dark" type="submit" value="сохранить" />
                     </div>
                 </form>
-                <button onclick="window.addLesson.close();">выйти</button>
+                <button class="btn btn-check" onclick="window.addLesson.close();">выйти</button>
             </dialog>
         </div>
 
@@ -103,8 +117,8 @@
                         }
                     }
                     </table>
-                    <input type="submit" value="Сохранить" />
-                    <input type="button" value="выйти" onclick="window.putLessons.close();" />
+                    <input class="btn btn-warning" type="submit" value="Сохранить" />
+                    <input class ="btn btn-check" type="button" value="выйти" onclick="window.putLessons.close();" />
                 </form>
             </dialog>
         </div>
